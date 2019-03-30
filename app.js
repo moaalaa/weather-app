@@ -1,6 +1,8 @@
 const request   = require('request');
 const yargs     = require('yargs');
 
+const geo = require('./geo');
+
 const argv = yargs
     .options({
         ip: {
@@ -13,21 +15,13 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-request({
-    url: `http://api.ipstack.com/${argv.ip}?access_key=c62ae9e59e38de710319b1e93f08cc43&format=1`,
-    json: true
-}, (error, response, body) => {
+geo.geoCode(argv.ip, (error, result) => {
     if (error) {
-        console.log("Unable To Connect To Server");
-        return;
-    }
-
-    if (!! body.type) {
-        console.log(`Address: ${body.region_name}, ${body.country_name}`);
-        console.log(`Latitude: ${body.latitude}`);
-        console.log(`Longitude: ${body.longitude}`);
+        console.log(error);
+        
     } else {
-        console.log("Something Wont Wrong Maybe The Ip Address Is Invalid");
+        console.log(`Address: ${result.address}`);
+        console.log(`Latitude: ${result.lat}`);
+        console.log(`Longitude: ${result.long}`);
     }
-    
-})
+});
