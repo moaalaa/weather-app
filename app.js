@@ -17,20 +17,24 @@ const argv = yargs
     .argv;
 
 geo.geoCode(argv.ip)
-    .then(result => {
-    
+    .then(({data}) => {
+        const result = data;
+        
         console.log(`Address: ${result.address}`);
-        console.log(`Latitude: ${result.lat}`);
-        console.log(`Longitude: ${result.long}`);
+        console.log(`Latitude: ${result.latitude}`);
+        console.log(`Longitude: ${result.longitude}`);
         
         console.log('------------------------------');
 
-        weather.geoWeather(result.lat, result.long).then(result => {
-            console.log(`It's Currently ${result.temperature} and weather is ${result.summary}, It's Feel Like ${result.apparentTemperature}`);
-        })
-        .catch(error => {
-            console.log(error);
-        });
+        weather.geoWeather(result.latitude, result.longitude)
+            .then(({data}) => {
+                const result = data.currently;
+                
+                console.log(`It's Currently ${result.temperature} and weather is ${result.summary}, It's Feel Like ${result.apparentTemperature}`);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     })
     .catch(error => {
         console.log(error);    
